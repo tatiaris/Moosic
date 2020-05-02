@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Moosic</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <script src="https://kit.fontawesome.com/c972f6d301.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="./client/css/master.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body>
+        <header>Moosic</header>
+        <div class="page-container flex-center">
+            <div class="input-btn-container">
+                <div class="container">
+                    <input id="song-input" type="text" placeholder="enter song(s): Levels Avicii, Skyfall Adele">
+                    <!-- <div style="text-align:center;padding:3px;">* seperate by commas for multiple songs</div> -->
+                </div>
+                <div id="convert_btn_container" class="container flex-center">
+                    <button id="convert-btn" type="button" name="button">CONVERT</button>
+                </div>
+                <div id="download_btn_container" class="container flex-center">
+                    <a id="download-btn" href="download" download>DOWNLOAD</a>
+                </div>
+                <div id="status_container" class="container flex-center">
+                    <div id="log">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>Copyright © 2020-2021 by <b>Rishabh Tatia</b>.</footer>
+        <script src="./client/js/main.js"></script>
+    </body>
+</html>
