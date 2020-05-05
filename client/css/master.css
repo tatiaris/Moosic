@@ -123,6 +123,16 @@
         width: 100%;
         letter-spacing: 2px;
     }
+    #spotify-link-input {
+        width: 0%;
+        letter-spacing: 2px;
+    }
+    #previous-btn {
+        font-size: 1.2em;
+    }
+    #next-btn {
+        font-size: 1.2em;
+    }
     #convert-btn {
         width: 50%;
         letter-spacing: 2px;
@@ -141,9 +151,9 @@
         display: none;
     }
     #log {
-        width: 60%;
+        width: 75%;
         max-height: 300px;
-        overflow: scroll;
+        overflow-y: scroll;
     }
     .song-status {
         text-align: center;
@@ -263,6 +273,16 @@
         width: 100%;
         letter-spacing: 2px;
     }
+    #spotify-link-input {
+        width: 0%;
+        letter-spacing: 2px;
+    }
+    #previous-btn {
+        font-size: 1.2em;
+    }
+    #next-btn {
+        font-size: 1.2em;
+    }
     #convert-btn {
         width: 50%;
         letter-spacing: 2px;
@@ -283,10 +303,10 @@
     #log {
         width: 60%;
         max-height: 300px;
-        overflow: scroll;
+        overflow-y: scroll;
     }
     .song-status {
-        text-align: left;
+        text-align: center;
         letter-spacing: 2px;
     }
     header {

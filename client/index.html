@@ -10,15 +10,16 @@
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
     </head>
     <body>
         <header>Moosic</header>
         <div class="page-container flex-center">
             <div class="input-btn-container">
-                <div class="container">
-                    <input id="song-input" type="text" placeholder="enter song(s): Levels Avicii, Skyfall Adele">
-                    <!-- <div style="text-align:center;padding:3px;">* seperate by commas for multiple songs</div> -->
+                <div class="container flex-center">
+                    <button id="previous-btn" style="display:none;" type="button"><</button>
+                    <input id="song-input" style="width:100%;" type="text" placeholder="enter song(s): Levels Avicii, Skyfall Adele">
+                    <input id="spotify-link-input" type="text" placeholder="enter spotify playlist link">
+                    <button id="next-btn" type="button">></button>
                 </div>
                 <div id="convert_btn_container" class="container flex-center">
                     <button id="convert-btn" type="button" name="button">CONVERT</button>

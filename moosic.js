@@ -17,8 +17,13 @@ serv.listen(2000);
 
 var fs = require('fs');
 
-function generate_id() { // min and max included
+function generate_id() {
     return Math.floor(Math.random() * (100000 - 10000 + 1) + 10000);
+}
+
+function reformat_query(q) {
+    q.replace(/[^A-Za-z0-9 ]/g, ' ');
+    return q;
 }
 
 var total_users = 0;
@@ -63,39 +68,46 @@ io.sockets.on('connection', function(socket) {
         });
         YD.on("error", function(error) {
             update_status(song_name, 'failed to convert');
-            to_be_downloaded--;
             console.log('error downloading ' + song_name);
         });
     }
 
     async function download_song(song_name) {
         update_status(song_name, 'fetching');
-        var search_url = "https://youtube.com/results?search_query=" + (song_name + " official").replace(' ', '+')
+        var search_url = "https://youtube.com/results?search_query=" + song_name.trim().replace(/ /g, '+') + '&sp=EgIQAQ%253D%253D';
         axios.get(search_url).then(response => {
             const $ = cheerio.load(response.data)
-            var href = $('.yt-lockup-title')[0].children[0].attribs.href;
-            var vid_id = href.substr(href.indexOf('=') + 1)
-            yt2mp3(vid_id, song_name)
+            try {
+                var href = $('.yt-lockup-title')[0].children[0].attribs.href;
+                var vid_id = href.substr(href.indexOf('=') + 1)
+                yt2mp3(vid_id, song_name)
+            } catch (e) {
+                to_be_downloaded++;
+                update_status(song_name, '<span style="color:red">error</span> fetching')
+                console.log('retrying fetching', song_name);
+                download_song(song_name);
+            }
         }), (error) => {
             console.log('error fetching', song_name);
-            to_be_downloaded--;
         };
     }
 
     function download_all_songs(song_list) {
+        if (song_list.length > 10) {
+            require('events').EventEmitter.defaultMaxListeners = 31;
+            if (song_list.length > 30) {
+                song_list.splice(0, 30);
+            }
+        }
         to_be_downloaded += song_list.length;
         for (var i = 0; i < song_list.length; i++) {
             download_song(song_list[i]);
         }
     }
 
-    console.log('new user: ', user_id);
-    socket.on('convert_songs', function(data) {
+    function convert_songs(song_list) {
         user_turn++;
-
-        archive = archiver('zip', {
-            zlib: { level: 9 } // Sets the compression level.
-        });
+        archive = archiver('zip', {zlib: { level: 9 }});
         archive.on('error', function(err) {
             console.log('error zipping files, please retry');
             throw err;
@@ -117,11 +129,40 @@ io.sockets.on('connection', function(socket) {
                 user_turn: user_turn
             })
         });
-
         archive.pipe(output);
 
         YD = new YoutubeMp3Downloader({ "ffmpegPath": "/usr/local/bin/ffmpeg", "outputPath": user_dir + '/songs' + user_turn.toString(), "youtubeVideoQuality": "highest", "queueParallelism": 2, "progressTimeout": 5000 });
 
-        download_all_songs(data.songs);
+        download_all_songs(song_list);
+    }
+
+    console.log('new user: ', user_id);
+
+    socket.on('convert_songs', function(data) {
+        convert_songs(data.songs);
     });
+
+    socket.on('convert_spotify_playlist', function(data) {
+        scrape_spotify_playlist(data.url);
+    });
+
+    function scrape_spotify_playlist(spotify_url) {
+        var song_list = [];
+        axios.get(spotify_url).then(response => {
+            const $ = cheerio.load(response.data)
+            var elems = $('.track-name-wrapper');
+
+            for (var i = 0; i < elems.length; i++) {
+                var song_name = elems[i].children[0].children[0].data;
+                var song_artist = elems[i].children[1].children[0].children[0].children[0].data;
+                var song_query = song_name + ' ' + song_artist;
+                song_list.push(reformat_query(song_query));
+            }
+
+            convert_songs(song_list);
+
+        }), (error) => {
+            console.log('error fetching', spotify_url);
+        };
+    }
 });
