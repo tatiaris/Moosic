@@ -7,19 +7,20 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
         <script src="https://kit.fontawesome.com/c972f6d301.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="./client/css/master.css">
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.glitch.com/bfd33427-5d70-41d4-b524-d2a88d01959e%2Fapple-touch-icon.png?v=1588670421743">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.glitch.com/bfd33427-5d70-41d4-b524-d2a88d01959e%2Ffavicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.glitch.com/bfd33427-5d70-41d4-b524-d2a88d01959e%2Ffavicon-16x16.png?v=1588670421723">
+        <link rel="manifest" href="https://cdn.glitch.com/bfd33427-5d70-41d4-b524-d2a88d01959e%2Fsite.webmanifest?v=1588670421766">
     </head>
     <body>
-        <header>Moosic</header>
+        <header><img src="https://cdn.glitch.com/bfd33427-5d70-41d4-b524-d2a88d01959e%2Flogo.png?v=1588672010924" alt="Moosic"></header>
         <div class="page-container flex-center">
             <div class="input-btn-container">
                 <div class="container flex-center">
-                    <button id="previous-btn" style="display:none;" type="button"><</button>
+                    <div style="width:10%"><button id="previous-btn" style="display:none;" type="button">&lt;</button></div>
                     <input id="song-input" style="width:100%;" type="text" placeholder="enter song(s): Levels Avicii, Skyfall Adele">
                     <input id="spotify-link-input" type="text" placeholder="enter spotify playlist link">
-                    <button id="next-btn" type="button">></button>
+                    <div style="width:10%"><button id="next-btn" type="button">&gt;</button></div>
                 </div>
                 <div id="convert_btn_container" class="container flex-center">
                     <button id="convert-btn" type="button" name="button">CONVERT</button>
@@ -33,7 +34,17 @@
                 </div>
             </div>
         </div>
-        <footer>Copyright © 2020-2021 by <b>Rishabh Tatia</b>.</footer>
+        <button id="help-btn" class="flex-center">?</button>
+        <div id="help-card" style="display:none;">
+            Using Moosic, you can download songs by either entering their name or by submitting a spotify playlist link.
+            <br><br>To change the type of input, please use the navigation buttons.
+            <br><br>For efficiency purposes, no more than 10 songs will be downloaded in one go.
+            <br><br>Created by:<br><a class="url" href="https://www.tatia.me">Rishabh Tatia</a>
+            <br>
+        </div>
+        <div id="notifications-container">
+        </div>
+        <footer>Made by <b><a class="url" href="https://www.tatia.me">Rishabh Tatia</a></b>.</footer>
         <script src="./client/js/main.js"></script>
     </body>
 </html>

@@ -13,6 +13,8 @@ $('#convert-btn').click(function() {
             });
             hide_convert_btn();
             show_status();
+        } else {
+            notify('Please enter a song to start the process.')
         }
     }
     else if (is_input_active('#spotify-link-input')) {
@@ -23,6 +25,8 @@ $('#convert-btn').click(function() {
             })
             hide_convert_btn();
             show_status();
+        } else {
+            notify('Please enter a valid URL.', 'neg');
         }
     }
 });
@@ -54,6 +58,21 @@ $('#previous-btn').click(function() {
     }
 });
 
+$('#help-btn').click(function() {
+    toggle_help_card();
+});
+
+$(document).on('click', '.close-btn', function() {
+    this.parentElement.style = 'height:0px;margin:0px;border:none;padding:0px;';
+    var that = this;
+    setTimeout(function() {
+        that.parentElement.remove();
+    }, 1000);
+});
+
+function show_notifications() {
+    $('#notifications-container')[0].style.left = '10%';
+}
 function is_input_active(tag) {
     if ($(tag)[0].style.width == '100%') return true;
     return false;
@@ -100,6 +119,20 @@ function hide_previous_btn() {
 function show_previous_btn() {
     $('#previous-btn')[0].style.display = 'block';
 }
+function toggle_help_card() {
+    if ($('#help-card')[0].style.display == 'none') {
+        $('#help-card')[0].style.display = 'block';
+    } else {
+        $('#help-card')[0].style.display = 'none';
+    }
+}
+function notify(message, type) {
+    var html = `<div class="notification ` + type + `">
+        <span class="close-btn">X</span>
+        ` + message + `
+    </div>`
+    document.getElementById('notifications-container').innerHTML += html;
+}
 
 socket.on('status_update', function(data) {
     var song_id = (data.song_name).replace(/[^A-Za-z0-9]/g, '-');
@@ -118,6 +151,10 @@ socket.on('download_complete', function(data) {
 
 socket.on('generating_download_file', function(data) {
     $('#log').append('<div class="song-status"> generating download file, please wait <span style="color:red;">' + (data.eta).toString() + '</span> seconds')
+})
+
+socket.on('notification', function(data) {
+    notify(data.message, data.type)
 })
 
 $(document).ready(function() {

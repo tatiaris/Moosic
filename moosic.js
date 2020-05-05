@@ -7,13 +7,14 @@ const serv = require('http').Server(app);
 const io = require('socket.io')(serv, {});
 const archiver = require('archiver');
 // const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+const ffmpeg_path = '/usr/local/bin/ffmpeg';
+
+serv.listen(2000);
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client', express.static(__dirname + '/client'));
-
-serv.listen(2000);
 
 var fs = require('fs');
 
@@ -49,6 +50,13 @@ io.sockets.on('connection', function(socket) {
         });
     }
 
+    function notify_user(message, type) {
+        socket.emit('notification', {
+            message: message,
+            type: type
+        })
+    }
+
     async function yt2mp3(video_id, song_name) {
         update_status(song_name, 'converting');
         YD.download(video_id);
@@ -74,7 +82,7 @@ io.sockets.on('connection', function(socket) {
 
     async function download_song(song_name) {
         update_status(song_name, 'fetching');
-        var search_url = "https://youtube.com/results?search_query=" + song_name.trim().replace(/ /g, '+') + '&sp=EgIQAQ%253D%253D';
+        var search_url = "https://youtube.com/results?search_query=" + song_name.replace(/ /g, '+') + '&sp=EgIQAQ%253D%253D';
         axios.get(search_url).then(response => {
             const $ = cheerio.load(response.data)
             try {
@@ -94,14 +102,13 @@ io.sockets.on('connection', function(socket) {
 
     function download_all_songs(song_list) {
         if (song_list.length > 10) {
-            require('events').EventEmitter.defaultMaxListeners = 31;
-            if (song_list.length > 30) {
-                song_list.splice(0, 30);
-            }
+            to_be_downloaded += 10;
+        } else {
+            to_be_downloaded += song_list.length;
         }
-        to_be_downloaded += song_list.length;
         for (var i = 0; i < song_list.length; i++) {
-            download_song(song_list[i]);
+            if (i < 10) download_song(song_list[i]);
+            else break;
         }
     }
 
@@ -123,6 +130,7 @@ io.sockets.on('connection', function(socket) {
         fs.mkdirSync(user_dir + '/songs' + user_turn.toString());
         var output = fs.createWriteStream(user_dir + '/songs' + user_turn.toString() + '.zip');
         output.on('close', function() {
+            notify_user('Congratulations! Your download is ready!', 'pos');
             console.log('download complete for user', user_id);
             socket.emit('download_complete', {
                 user_id: user_id,
@@ -131,7 +139,7 @@ io.sockets.on('connection', function(socket) {
         });
         archive.pipe(output);
 
-        YD = new YoutubeMp3Downloader({ "ffmpegPath": "/usr/local/bin/ffmpeg", "outputPath": user_dir + '/songs' + user_turn.toString(), "youtubeVideoQuality": "highest", "queueParallelism": 2, "progressTimeout": 5000 });
+        YD = new YoutubeMp3Downloader({ "ffmpegPath": ffmpeg_path, "outputPath": user_dir + '/songs' + user_turn.toString(), "youtubeVideoQuality": "highest", "queueParallelism": 2, "progressTimeout": 5000 });
 
         download_all_songs(song_list);
     }
