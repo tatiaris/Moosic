@@ -39,7 +39,6 @@ $('#download-btn').click(function() {
     $('#log').html('');
 });
 
-
 $('#next-btn').click(function() {
     if ($('#song-input')[0].style.width == '100%') {
         hide_song_name_input();

@@ -6,6 +6,8 @@ const app = express();
 const serv = require('http').Server(app);
 const io = require('socket.io')(serv, {});
 const archiver = require('archiver');
+const rimraf = require('rimraf')
+var fs = require('fs');
 // const ffmpeg = require('@ffmpeg-installer/ffmpeg');
 const ffmpeg_path = '/usr/local/bin/ffmpeg';
 
@@ -15,8 +17,6 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client', express.static(__dirname + '/client'));
-
-var fs = require('fs');
 
 function generate_id() {
     return Math.floor(Math.random() * (100000 - 10000 + 1) + 10000);
@@ -136,6 +136,10 @@ io.sockets.on('connection', function(socket) {
                 user_id: user_id,
                 user_turn: user_turn
             })
+            setTimeout(() => {
+                rimraf(user_dir, function () { console.log("deleted folder", user_dir); });
+                socket.emit('files_deleted')
+            }, 100000);
         });
         archive.pipe(output);
 
