@@ -139,7 +139,7 @@ io.sockets.on('connection', function(socket) {
             setTimeout(() => {
                 rimraf(user_dir, function () { console.log("deleted folder", user_dir); });
                 socket.emit('files_deleted')
-            }, 100000);
+            }, 600000);
         });
         archive.pipe(output);
 

@@ -32,6 +32,8 @@ $('#convert-btn').click(function() {
 });
 
 $('#download-btn').click(function() {
+    stop_countdown();
+    hide_countdown_timer();
     hide_download_btn();
     show_convert_btn();
     $('#song-input')[0].value = '';
@@ -68,7 +70,13 @@ $(document).on('click', '.close-btn', function() {
         that.parentElement.remove();
     }, 1000);
 });
-
+function reset_process() {
+    show_convert_btn();
+    hide_status();
+    hide_download_btn();
+    hide_countdown_timer();
+    clear_log();
+}
 function show_notifications() {
     $('#notifications-container')[0].style.left = '10%';
 }
@@ -93,6 +101,9 @@ function hide_status() {
 }
 function show_status() {
     $('#status_container')[0].style.display = 'flex';
+}
+function clear_log() {
+    $('#log').html('');
 }
 function hide_song_name_input() {
     $('#song-input')[0].style.width = '0%';
@@ -125,6 +136,28 @@ function toggle_help_card() {
         $('#help-card')[0].style.display = 'none';
     }
 }
+function hide_countdown_timer() {
+    $('#countdown_container')[0].style.display = 'none';
+}
+function show_countdown_timer() {
+    $('#countdown_container')[0].style.display = 'block';
+}
+function start_countdown() {
+    var countdown = 10;
+    var x = setInterval(function() {
+        var minutes = Math.floor(countdown/60);
+        var seconds = countdown - (60*Math.floor(countdown/60));
+        document.getElementById("countdown").innerHTML =  minutes + "m " + seconds + "s";
+        countdown--;
+        if (countdown < 0) {
+            clearInterval(x);
+            reset_process();
+        }
+    }, 1000);
+}
+function stop_countdown() {
+    clearInterval(x);
+}
 function notify(message, type) {
     var html = `<div class="notification ` + type + `">
         <span class="close-btn">X</span>
@@ -146,6 +179,8 @@ socket.on('download_complete', function(data) {
     $('#download-btn')[0].href = 'download/?id=' + data.user_id + '&turn=' + data.user_turn;
     hide_status();
     show_download_btn();
+    start_countdown();
+    show_countdown_timer();
 })
 
 socket.on('generating_download_file', function(data) {
@@ -160,6 +195,7 @@ $(document).ready(function() {
     show_convert_btn();
     hide_status();
     hide_download_btn();
+    hide_countdown_timer();
 });
 
 function is_valid_spotify_link(link) {
